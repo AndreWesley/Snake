@@ -13,9 +13,9 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
+  - Snake
+  - Ground
+  - Food
   - 
   - 
   - 
@@ -40,4 +40,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Food
+    uniqueID: 1263979105
+    locked: 0
+  - name: Snake
+    uniqueID: 3935651049
+    locked: 0
+  - name: UI
+    uniqueID: 4077542981
     locked: 0
