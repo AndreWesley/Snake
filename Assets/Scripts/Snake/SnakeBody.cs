@@ -1,43 +1,58 @@
-﻿#pragma warning disable 649
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 
-[RequireComponent (typeof (Rigidbody2D), typeof (Animator))]
-public class SnakeBody : MonoBehaviour {
+public class SnakeBody : SnakePart {
 
-	public Rigidbody2D rb { get; private set; }
-	public ScriptableDirection direction { get; private set; }
-	private Animator animator;
+	[SerializeField] private Sprite baseSprite = null;
+	[SerializeField] private Sprite turnSprite = null;
+	private SpriteRenderer spriteRend;
 
-	private bool isTail;
-
-	// Start is called before the first frame update
-	void Start () {
-		rb = GetComponent<Rigidbody2D> ();
-		animator = GetComponent<Animator> ();
+	new private void Start () {
+		base.Start ();
+		spriteRend = GetComponentInChildren<SpriteRenderer> ();
+		UnityEngine.Assertions.Assert.IsNotNull (spriteRend);
 	}
 
-	public void UpdateSnakeBody (Vector2Int position, ScriptableDirection direction) {
-		UpdateSnakeAnimation (position, direction);
-		rb.MovePosition (position);
-		this.direction = direction;
-	}
-
-	private void UpdateSnakeAnimation (Vector2Int position, ScriptableDirection dir) {
-		if (isTail) {
-			animator.SetTrigger (dir.name);
-			return;
+	protected override void UpdateSnakeVisual (Vector2Int position, ScriptableDirection toDirection, ScriptableDirection fromDirection) {
+		float angle;
+		if (fromDirection == toDirection) {
+			spriteRend.sprite = baseSprite;
+			angle = toDirection.Angle - Constants.SPRITES_ANGLE_OFFSET;
+		} else {
+			WorldDirection from = fromDirection.Side;
+			WorldDirection to = toDirection.Side;
+			angle = GetAngleBetweenDirections (from, to);
+			spriteRend.sprite = turnSprite;
 		}
-
-		if (direction != dir) {
-			int nextStep = GetTurnSide(dir.Side);
-			animator.SetInteger (String.Format ("From{0}", direction.Side), nextStep);
-		}
+		rb.MoveRotation (angle);
 	}
 
-	private int GetTurnSide (WorldDirection to) {
-		return (to == WorldDirection.Up || to == WorldDirection.Right) ? 1 : -1;
+	private float GetAngleBetweenDirections (WorldDirection from, WorldDirection to) {
+		switch (from) {
+			case WorldDirection.Up:
+				return GetTurnSide (to) ?
+					Constants.AngleFromToDirection.UP_TO_RIGHT :
+					Constants.AngleFromToDirection.UP_TO_LEFT;
+			case WorldDirection.Down:
+				return GetTurnSide (to) ?
+					Constants.AngleFromToDirection.DOWN_TO_RIGHT :
+					Constants.AngleFromToDirection.DOWN_TO_LEFT;
+			case WorldDirection.Left:
+				return GetTurnSide (to) ?
+					Constants.AngleFromToDirection.DOWN_TO_RIGHT :
+					Constants.AngleFromToDirection.UP_TO_RIGHT;
+			case WorldDirection.Right:
+				return GetTurnSide (to) ?
+					Constants.AngleFromToDirection.DOWN_TO_LEFT :
+					Constants.AngleFromToDirection.UP_TO_LEFT;
+		}
+		return 0f;
+	}
+
+	private bool GetTurnSide (WorldDirection to) {
+		return to == WorldDirection.Up || to == WorldDirection.Right;
 	}
 }
