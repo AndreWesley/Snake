@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Right
   m_EditorClassIdentifier: 
   value: {x: 1, y: 0}
-  side: 3
+  side: 8
+  angle: 0

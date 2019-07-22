@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04742efda5bb9b24abf3258f0751dd15, type: 3}
   m_Name: Options
   m_EditorClassIdentifier: 
-  gameLevel: 1
+  gameLevel: 4
   musicVolume: 1
   sfxVolume: 1
