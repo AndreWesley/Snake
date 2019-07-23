@@ -94,6 +94,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentDirection: {fileID: 0}
+  spriteRend: {fileID: 6342655827951462099}
 --- !u!1 &6342655827951462097
 GameObject:
   m_ObjectHideFlags: 0

@@ -26,6 +26,7 @@ public class SnakeController : SnakePart {
 	#region hided fields
 	private ScriptableDirection nextDirection;
 	private List<SnakePart> snakeParts;
+	private SpriteRenderer spriteRenderer;
 	private float movementTimeout;
 	private bool justAte;
 	private bool isAlive;
@@ -43,8 +44,9 @@ public class SnakeController : SnakePart {
 		Direction = startDirection;
 	}
 
-	new private void Start () {
-		base.Start ();
+	private void Start () {
+		spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
 		CreateSnakeParts ();
 		grid.RemoveAvaliableCell (Vector2Int.FloorToInt (rb.position));
 		StartCoroutine (SnakeUpdateCoroutine ());
@@ -122,7 +124,9 @@ public class SnakeController : SnakePart {
 
 	protected override void UpdateSnakeVisual (Vector2Int position, ScriptableDirection toDirection, ScriptableDirection fromDirection) {
 		if (fromDirection != toDirection) {
-			rb.MoveRotation (toDirection.Angle - Constants.SPRITES_ANGLE_OFFSET);
+			float angle = toDirection.Angle - Constants.SPRITES_ANGLE_OFFSET;
+			//spriteRenderer.transform.rotation = Quaternion.Euler(Vector3.forward * angle);
+			rb.MoveRotation(angle);
 		}
 	}
 

@@ -11,14 +11,15 @@ public class SnakeBody : SnakePart {
 	private SpriteRenderer spriteRend;
 
 	#region MonoBehaviour Method
-	new protected void Start () {
-		print('a');
-		base.Start ();
-		spriteRend = GetComponentInChildren<SpriteRenderer> ();
-		UnityEngine.Assertions.Assert.IsNotNull (spriteRend);
+	new protected void OnEnable () {
+		base.OnEnable ();
+
+		if (!spriteRend) {
+			spriteRend = GetComponentInChildren<SpriteRenderer> ();
+		}
 	}
 	#endregion
-	
+
 	#region snake body methods
 	protected override void UpdateSnakeVisual (Vector2Int position, ScriptableDirection toDirection, ScriptableDirection fromDirection) {
 		float angle;
@@ -26,10 +27,10 @@ public class SnakeBody : SnakePart {
 			spriteRend.sprite = baseSprite;
 			angle = toDirection.Angle - Constants.SPRITES_ANGLE_OFFSET;
 		} else {
-			print(spriteRend);
 			spriteRend.sprite = turnedSnakeSprite;
 			angle = GetTurnedSnakeAngle (fromDirection.Side, toDirection.Side);
 		}
+		//spriteRend.transform.rotation = Quaternion.Euler (Vector3.forward * angle);
 		rb.MoveRotation (angle);
 	}
 

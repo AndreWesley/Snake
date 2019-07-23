@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 2483547059092378688}
   - component: {fileID: 1685382462649494263}
   m_Layer: 8
-  m_Name: Body
+  m_Name: SnakeBody
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -178,3 +178,4 @@ MonoBehaviour:
     type: 3}
   turnedSnakeSprite: {fileID: 6065941948060098579, guid: 1ce7091af5b34c84d9affa6dea27e610,
     type: 3}
+  spriteRend: {fileID: 2483547058075193677}
