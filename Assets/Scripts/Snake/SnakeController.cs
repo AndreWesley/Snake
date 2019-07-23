@@ -28,6 +28,8 @@ public class SnakeController : SnakePart {
 	private List<SnakePart> snakeParts;
 	private SpriteRenderer spriteRenderer;
 	private float movementTimeout;
+	private int movementTimeoutLevel;
+	private int eatedFoods;
 	private bool justAte;
 	private bool isAlive;
 	#endregion
@@ -36,8 +38,10 @@ public class SnakeController : SnakePart {
 	private void Awake () {
 		justAte = false;
 		isAlive = true;
+		eatedFoods = 0;
 
-		movementTimeout = 1f - options.gameLevel / Constants.MOVEMENT_TIMEOUT_DIVISOR;
+		movementTimeoutLevel = options.gameLevel;
+		SetMovementTimeout(movementTimeoutLevel);
 
 		snakeParts = new List<SnakePart> ();
 		currentDirection = startDirection;
@@ -154,6 +158,13 @@ public class SnakeController : SnakePart {
 
 	private void ToEat () {
 		justAte = true;
+		eatedFoods++;
+
+		//check eated foods to increase speed
+		if (eatedFoods % 3 == 0) {
+			movementTimeoutLevel = Mathf.Clamp(movementTimeoutLevel + 1, Constants.MIN_LEVEL, Constants.MAX_LEVEL);
+			SetMovementTimeout(movementTimeoutLevel);
+		}
 
 		//get the last body and tail
 		int tailIndex = snakeParts.Count - 1;
@@ -175,6 +186,10 @@ public class SnakeController : SnakePart {
 		newPart.UpdateSnakePart (pos, to, from);
 		snakeParts.Insert (lastBodyIndex, newPart);
 		onEetFood.Call ();
+	}
+
+	private void SetMovementTimeout(int level) {
+		movementTimeout = 1f - level / Constants.MOVEMENT_TIMEOUT_DIVISOR;
 	}
 
 }
