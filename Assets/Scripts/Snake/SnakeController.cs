@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class SnakeController : SnakePart {
 
-	[SerializeField] private ScriptableGameEvent eatEvent = null;
+	[SerializeField] private ScriptableGameEvent onEetFood = null;
+	[SerializeField] private ScriptableGameEvent onGameOver = null;
 	[SerializeField] private ScriptableGrid grid = null;
 	[SerializeField] private ScriptableOptions options = null;
 	[SerializeField] private ScriptableDirection startDirection = null;
@@ -61,7 +62,7 @@ public class SnakeController : SnakePart {
 			}
 			yield return new WaitForSeconds (movementTimeout);
 		}
-		print("gameover");
+		onGameOver.Call();
 	}
 
 	private void UpdateSnake () {
@@ -135,7 +136,7 @@ public class SnakeController : SnakePart {
 		SnakePart newPart = snakePool.Spawn<SnakePart> (position, rotation);
 		newPart.currentDirection = snakeParts[lastBodyPartIndex].currentDirection;
 		snakeParts.Insert (lastBodyPartIndex, newPart);
-		eatEvent.Call ();
+		onEetFood.Call ();
 	}
 
 	private void OnDrawGizmos () {

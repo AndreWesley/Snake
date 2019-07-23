@@ -9,6 +9,10 @@ public class Score : MonoBehaviour
 	[SerializeField] private ScriptableScore score = null;
 	[SerializeField] private ScriptableOptions options = null;
 
+	private void Start() {
+		score.value = 0;
+	}
+
 	public void AddScore() {
 		score.value += options.gameLevel;
 		scoreText.text = score.value.ToString();

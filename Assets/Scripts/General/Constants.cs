@@ -1,7 +1,7 @@
 ﻿public static class Constants {
 	public static readonly float SPRITES_ANGLE_OFFSET = 90f;
 	public static readonly float EPSILON = 0.001f;
-	public static readonly float FADE_TIME = 1f;
+	public static readonly float FADE = 1f;
 
 	public static class AngleFromToDirection {
 		public static readonly float DOWN_TO_LEFT = 0f;
