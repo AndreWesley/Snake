@@ -32,16 +32,18 @@ public class SnakeController : SnakePart {
 	private int eatedFoods;
 	private bool justAte;
 	private bool isAlive;
+	private bool updateSnake;
 	#endregion
 
 	#region MonoBehaviour Methods
 	private void Awake () {
+		updateSnake = false;
 		justAte = false;
 		isAlive = true;
 		eatedFoods = 0;
 
 		movementTimeoutLevel = options.gameLevel;
-		SetMovementTimeout(movementTimeoutLevel);
+		SetMovementTimeout (movementTimeoutLevel);
 
 		snakeParts = new List<SnakePart> ();
 		currentDirection = startDirection;
@@ -49,7 +51,7 @@ public class SnakeController : SnakePart {
 	}
 
 	private void Start () {
-		spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+		spriteRenderer = GetComponentInChildren<SpriteRenderer> ();
 
 		CreateSnakeParts ();
 		grid.RemoveAvaliableCell (Vector2Int.FloorToInt (rb.position));
@@ -90,16 +92,27 @@ public class SnakeController : SnakePart {
 	}
 
 	private IEnumerator SnakeUpdateCoroutine () {
-		yield return new WaitForSeconds (movementTimeout);
-		while (isAlive) {
+		while(isAlive) {
+			yield return new WaitForSeconds (movementTimeout);
+			updateSnake = true;
+		}
+		onGameOver.Call ();
+	}
+
+
+	private void FixedUpdate () {
+		//this is here, on update and not no SnakeUpateCoroutine
+		//because a rendering issue for, even the WaitForFixedUpdate
+		//doesn't fixed. But rotating and change the sprite together
+		//on fixed update has fixed it
+		if (isAlive && updateSnake) {
 			if (CheckPath ()) {
 				SnakeUpdate ();
+				updateSnake = false;
 			} else {
 				isAlive = false;
 			}
-			yield return new WaitForSeconds(movementTimeout);
 		}
-		onGameOver.Call ();
 	}
 
 	private void SnakeUpdate () {
@@ -130,7 +143,7 @@ public class SnakeController : SnakePart {
 		if (fromDirection != toDirection) {
 			float angle = toDirection.Angle - Constants.SPRITES_ANGLE_OFFSET;
 			//spriteRenderer.transform.rotation = Quaternion.Euler(Vector3.forward * angle);
-			rb.MoveRotation(angle);
+			rb.MoveRotation (angle);
 		}
 	}
 
@@ -162,8 +175,8 @@ public class SnakeController : SnakePart {
 
 		//check eated foods to increase speed
 		if (eatedFoods % 3 == 0) {
-			movementTimeoutLevel = Mathf.Clamp(movementTimeoutLevel + 1, Constants.MIN_LEVEL, Constants.MAX_LEVEL);
-			SetMovementTimeout(movementTimeoutLevel);
+			movementTimeoutLevel = Mathf.Clamp (movementTimeoutLevel + 1, Constants.MIN_LEVEL, Constants.MAX_LEVEL);
+			SetMovementTimeout (movementTimeoutLevel);
 		}
 
 		//get the last body and tail
@@ -188,7 +201,7 @@ public class SnakeController : SnakePart {
 		onEetFood.Call ();
 	}
 
-	private void SetMovementTimeout(int level) {
+	private void SetMovementTimeout (int level) {
 		movementTimeout = 1f - level / Constants.MOVEMENT_TIMEOUT_DIVISOR;
 	}
 
