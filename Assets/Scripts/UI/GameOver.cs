@@ -10,15 +10,16 @@ public class GameOver : MonoBehaviour
 	[SerializeField] private Text highScoreText;
 	[SerializeField] private ScriptableScore score;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
+		//if you beat the high score, don't show
+		//game over, but shows a congrats message
 		if(score.CheckNewRecord()) {
-			gameOver.text = "CONGRATS!\nNEW RECORD!";
+			gameOver.text = Constants.NEW_RECORD;
 			gameOver.color = Color.yellow;
 		}
+
         scoreText.text = score.value.ToString();
 		highScoreText.text = score.highScore.ToString();
-
     }
 }

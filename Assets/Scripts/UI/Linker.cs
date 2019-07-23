@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Credits : MonoBehaviour
+public class Linker : MonoBehaviour
 {
     public void OpenURL(string url) {
 		Application.OpenURL(url);

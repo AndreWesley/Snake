@@ -5,138 +5,56 @@ using UnityEngine;
 
 public class SnakeController : SnakePart {
 
-	[SerializeField] private ScriptableGameEvent onEetFood = null;
-	[SerializeField] private ScriptableGameEvent onGameOver = null;
-	[SerializeField] private ScriptableGrid grid = null;
-	[SerializeField] private ScriptableOptions options = null;
+	#region Inspector fields
+	[Header ("Snake Setup")]
 	[SerializeField] private ScriptableDirection startDirection = null;
+	[SerializeField] private ScriptableOptions options = null;
 
-	[SerializeField] private LayerMask layerMask = default (LayerMask);
+	[Header ("Snake Parts")]
 	[SerializeField] private GameObject TailPrefab = null;
 	[SerializeField] private PoolManager snakePool = null;
 
-	private float movementTimeout;
+	[Header ("Grid navigation")]
+	[SerializeField] private LayerMask layerMask = default (LayerMask);
+	[SerializeField] private ScriptableGrid grid = null;
+
+	[Header ("Events")]
+	[SerializeField] private ScriptableGameEvent onEetFood = null;
+	[SerializeField] private ScriptableGameEvent onGameOver = null;
+	#endregion
+
+	#region hided fields
 	private ScriptableDirection nextDirection;
 	private List<SnakePart> snakeParts;
+	private float movementTimeout;
 	private bool justAte;
 	private bool isAlive;
+	#endregion
 
+	#region MonoBehaviour Methods
 	private void Awake () {
 		justAte = false;
 		isAlive = true;
-		float movementTimoutDivisor = 10f;
-		movementTimeout = 1f - options.gameLevel / movementTimoutDivisor;
+
+		movementTimeout = 1f - options.gameLevel / Constants.MOVEMENT_TIMEOUT_DIVISOR;
+
+		snakeParts = new List<SnakePart> ();
 		currentDirection = startDirection;
 		Direction = startDirection;
-		snakeParts = new List<SnakePart> ();
 	}
 
 	new private void Start () {
 		base.Start ();
 		CreateSnakeParts ();
-		grid.Remove (new Vector2Int ((int) rb.position.x, (int) rb.position.y));
-		StartCoroutine (SnakeUpdate ());
-	}
-
-	private void CreateSnakeParts () {
-		//add body
-		Vector3Int pos = Vector3Int.FloorToInt (transform.position);
-		pos.x -= startDirection.Value.x;
-		pos.y -= startDirection.Value.y;
-		snakeParts.Add (snakePool.Spawn<SnakePart> (pos, transform.rotation));
-
-		//add tail
-		pos.x -= startDirection.Value.x;
-		pos.y -= startDirection.Value.y;
-		SnakePart tail = Instantiate (TailPrefab, pos, transform.rotation).GetComponent<SnakePart> ();
-		snakeParts.Add (tail);
-	}
-
-	private IEnumerator SnakeUpdate () {
-		yield return new WaitForSeconds (movementTimeout);
-		while(isAlive) {
-			if (CheckPath ()) {
-				UpdateSnake ();
-			} else {
-				isAlive = false;
-			}
-			yield return new WaitForSeconds (movementTimeout);
-		}
-		onGameOver.Call();
-	}
-
-	private void UpdateSnake () {
-		int nextX;
-		int nextY;
-
-		SnakePart tail = snakeParts[snakeParts.Count - 1];
-		SnakePart lastBodyPart = snakeParts[snakeParts.Count - 2];
-
-		//Update Tail
-		if (!justAte) {
-			nextX = (int) lastBodyPart.transform.position.x;
-			nextY = (int) lastBodyPart.transform.position.y;
-			grid.Add (Vector2Int.FloorToInt (tail.rb.position));
-			tail.UpdateSnakePart (new Vector2Int (nextX, nextY), lastBodyPart.currentDirection);
-		} else {
-			justAte = false;
-		}
-
-		//update Neck
-		nextX = (int) transform.position.x;
-		nextY = (int) transform.position.y;
-		lastBodyPart.UpdateSnakePart (new Vector2Int (nextX, nextY), nextDirection, currentDirection);
-		snakeParts.Remove (lastBodyPart);
-		snakeParts.Insert (0, lastBodyPart);
-
-		//Update head
-		nextX = (int) rb.position.x + nextDirection.Value.x;
-		nextY = (int) rb.position.y + nextDirection.Value.y;
-		Vector2Int newPos = new Vector2Int (nextX, nextY);
-		UpdateSnakePart (newPos, nextDirection, currentDirection);
-		grid.Remove (newPos);
-	}
-
-	protected override void UpdateSnakeVisual (Vector2Int position, ScriptableDirection toDirection, ScriptableDirection fromDirection) {
-		if (fromDirection != toDirection) {
-			rb.MoveRotation (toDirection.Angle - Constants.SPRITES_ANGLE_OFFSET);
-		}
-	}
-
-	private bool CheckPath () {
-		Vector2 start = rb.position + (Vector2) nextDirection.Value * 0.5f;
-		Vector2 end = rb.position + nextDirection.Value;
-		RaycastHit2D hit = Physics2D.Linecast (start, end, layerMask);
-		return hit && !hit.collider.CompareTag ("Player");
-	}
-
-	public ScriptableDirection Direction {
-		set {
-			Vector2 currentDir = currentDirection.Value;
-			if (value.Value != -currentDir)
-				nextDirection = value;
-		}
+		grid.RemoveAvaliableCell (Vector2Int.FloorToInt (rb.position));
+		StartCoroutine (SnakeUpdateCoroutine ());
 	}
 
 	private void OnTriggerEnter2D (Collider2D other) {
 		if (other.CompareTag ("Food")) {
-			other.gameObject.SetActive(false);
+			other.gameObject.SetActive (false);
 			ToEat ();
 		}
-	}
-
-	private void ToEat () {
-		justAte = true;
-
-		int lastBodyPartIndex = snakeParts.Count - 2;
-		Vector2 lastBodyPartPosition = snakeParts[lastBodyPartIndex].rb.position;
-		Vector2Int position = Vector2Int.FloorToInt (lastBodyPartPosition);
-		Quaternion rotation = snakeParts[lastBodyPartIndex].transform.rotation;
-
-		SnakePart newPart = snakePool.Spawn<SnakePart> (position, rotation);
-		newPart.currentDirection = snakeParts[lastBodyPartIndex].currentDirection;
-		snakeParts.Insert (lastBodyPartIndex, newPart);
-		onEetFood.Call ();
 	}
 
 	private void OnDrawGizmos () {
@@ -146,6 +64,113 @@ public class SnakeController : SnakePart {
 		Vector2 start = (Vector2) transform.position + dir * 0.5f;
 		Vector2 end = (Vector2) transform.position + dir;
 		Gizmos.DrawLine (start, end);
+	}
+	#endregion
+
+	private void CreateSnakeParts () {
+		//add body
+		Vector3Int pos = Vector3Int.FloorToInt (transform.position);
+		pos.x -= startDirection.Value.x;
+		pos.y -= startDirection.Value.y;
+		snakeParts.Add (snakePool.Spawn<SnakePart> (pos, transform.rotation));
+		grid.RemoveAvaliableCell (pos);
+
+		//add tail
+		pos.x -= startDirection.Value.x;
+		pos.y -= startDirection.Value.y;
+		SnakePart tail = Instantiate (TailPrefab, pos, transform.rotation).GetComponent<SnakePart> ();
+		snakeParts.Add (tail);
+		grid.RemoveAvaliableCell (pos);
+	}
+
+	private IEnumerator SnakeUpdateCoroutine () {
+		yield return new WaitForSeconds (movementTimeout);
+		while (isAlive) {
+			if (CheckPath ()) {
+				SnakeUpdate ();
+			} else {
+				isAlive = false;
+			}
+			yield return new WaitForSeconds(movementTimeout);
+		}
+		onGameOver.Call ();
+	}
+
+	private void SnakeUpdate () {
+		SnakePart tail = snakeParts[snakeParts.Count - 1];
+		SnakePart lastBodyPart = snakeParts[snakeParts.Count - 2];
+
+		//Update Tail
+		if (!justAte) {
+			grid.AddAvaliableCell (Vector2Int.FloorToInt (tail.rb.position));
+			Vector2Int tailPosition = Vector2Int.FloorToInt (lastBodyPart.rb.position);
+			tail.UpdateSnakePart (tailPosition, lastBodyPart.currentDirection);
+		} else {
+			justAte = false;
+		}
+
+		//update Neck
+		lastBodyPart.UpdateSnakePart (Vector2Int.FloorToInt (rb.position), nextDirection, currentDirection);
+		snakeParts.Remove (lastBodyPart);
+		snakeParts.Insert (0, lastBodyPart);
+
+		//Update head
+		Vector2Int headPosition = Vector2Int.FloorToInt (rb.position) + nextDirection.Value;
+		UpdateSnakePart (headPosition, nextDirection, currentDirection);
+		grid.RemoveAvaliableCell (headPosition);
+	}
+
+	protected override void UpdateSnakeVisual (Vector2Int position, ScriptableDirection toDirection, ScriptableDirection fromDirection) {
+		if (fromDirection != toDirection) {
+			rb.MoveRotation (toDirection.Angle - Constants.SPRITES_ANGLE_OFFSET);
+		}
+	}
+
+	/// <summary>
+	/// return true if the snake can move
+	/// </summary>
+	private bool CheckPath () {
+		Vector2 start = rb.position + (Vector2) nextDirection.Value * 0.5f;
+		Vector2 end = rb.position + nextDirection.Value;
+
+		RaycastHit2D hit = Physics2D.Linecast (start, end, layerMask);
+
+		return hit && !hit.collider.CompareTag ("Player");
+	}
+
+	public ScriptableDirection Direction {
+		set {
+			Vector2 currentDir = currentDirection.Value;
+			//on can change direction if the new direction
+			//is not the opposite of the current direction
+			if (value.Value != -currentDir)
+				nextDirection = value;
+		}
+	}
+
+	private void ToEat () {
+		justAte = true;
+
+		//get the last body and tail
+		int tailIndex = snakeParts.Count - 1;
+		int lastBodyIndex = snakeParts.Count - 2;
+		SnakePart tail = snakeParts[tailIndex];
+		SnakePart lastBody = snakeParts[lastBodyIndex];
+
+		//get position and rotation for new body part
+		Vector2Int pos = Vector2Int.FloorToInt (lastBody.rb.position);
+		Quaternion rot = lastBody.transform.rotation;
+
+		//get directions for new body part
+		ScriptableDirection from = snakeParts[tailIndex].currentDirection;
+		ScriptableDirection to = snakeParts[lastBodyIndex].currentDirection;
+
+		//spawning and setting up the new body part
+		SnakePart newPart = snakePool.Spawn<SnakePart> (pos, Quaternion.identity);
+		newPart.currentDirection = from;
+		newPart.UpdateSnakePart (pos, to, from);
+		snakeParts.Insert (lastBodyIndex, newPart);
+		onEetFood.Call ();
 	}
 
 }

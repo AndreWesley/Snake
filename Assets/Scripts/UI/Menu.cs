@@ -8,10 +8,10 @@ public class Menu : MonoBehaviour {
 
 	[SerializeField] private Animator currentMenu = null;
 
-	public void ChangeMenuTo (Animator menu) {
+	public void ChangeMenuTo (Animator menuAnimator) {
 		currentMenu.SetTrigger ("Exit");
-		menu.SetTrigger ("Enter");
+		menuAnimator.SetTrigger ("Enter");
 
-		currentMenu = menu;
+		currentMenu = menuAnimator;
 	}
 }

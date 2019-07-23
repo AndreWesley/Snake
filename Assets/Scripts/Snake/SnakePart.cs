@@ -4,7 +4,7 @@
 public abstract class SnakePart : MonoBehaviour, ISnakePart {
 
 	public Rigidbody2D rb { get; protected set; }
-	public ScriptableDirection currentDirection;
+	[HideInInspector] public ScriptableDirection currentDirection;
 
 	protected void Start () {
 		rb = GetComponent<Rigidbody2D> ();

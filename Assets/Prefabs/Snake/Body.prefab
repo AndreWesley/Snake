@@ -173,7 +173,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 218c84ebc4a1fba40b4ab1f31f678609, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentDirection: {fileID: 0}
   baseSprite: {fileID: 5016601151968212906, guid: 1ce7091af5b34c84d9affa6dea27e610,
     type: 3}
-  turnSprite: {fileID: 6065941948060098579, guid: 1ce7091af5b34c84d9affa6dea27e610,
+  turnedSnakeSprite: {fileID: 6065941948060098579, guid: 1ce7091af5b34c84d9affa6dea27e610,
     type: 3}

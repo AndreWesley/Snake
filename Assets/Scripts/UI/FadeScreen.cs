@@ -3,26 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Image))]
-public class FadeScreen : MonoBehaviour
-{
+[RequireComponent (typeof (Image))]
+public class FadeScreen : MonoBehaviour {
 	[SerializeField] private bool startDarkAndFade = true;
 	private Image blackScreen;
 
-    private void Start()
-    {
-		blackScreen = GetComponent<Image>();
+	private void Start () {
+		//setup black screen and prevent from
+		//player click on others UI elements
+		blackScreen = GetComponent<Image> ();
 		blackScreen.raycastTarget = false;
 
-		if(startDarkAndFade) {
-		blackScreen.color = Color.black;
-		Fade(false);
+		if (startDarkAndFade) {
+			blackScreen.color = Color.black;
+			Fade (false);
 		} else {
 			blackScreen.color = Color.clear;
 		}
-    }
+	}
 
-	public void Fade(bool darken) {
+	public void Fade (bool darken) {
 		float fadeFactor = darken ? 1f : 0f;
 		blackScreen.CrossFadeAlpha (fadeFactor, Constants.FADE, true);
 	}

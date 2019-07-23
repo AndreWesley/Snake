@@ -7,30 +7,38 @@ using UnityEngine;
 public class SnakeBody : SnakePart {
 
 	[SerializeField] private Sprite baseSprite = null;
-	[SerializeField] private Sprite turnSprite = null;
+	[SerializeField] private Sprite turnedSnakeSprite = null;
 	private SpriteRenderer spriteRend;
 
-	new private void Start () {
+	#region MonoBehaviour Method
+	new protected void Start () {
+		print('a');
 		base.Start ();
 		spriteRend = GetComponentInChildren<SpriteRenderer> ();
 		UnityEngine.Assertions.Assert.IsNotNull (spriteRend);
 	}
-
+	#endregion
+	
+	#region snake body methods
 	protected override void UpdateSnakeVisual (Vector2Int position, ScriptableDirection toDirection, ScriptableDirection fromDirection) {
 		float angle;
 		if (fromDirection == toDirection) {
 			spriteRend.sprite = baseSprite;
 			angle = toDirection.Angle - Constants.SPRITES_ANGLE_OFFSET;
 		} else {
-			WorldDirection from = fromDirection.Side;
-			WorldDirection to = toDirection.Side;
-			angle = GetAngleBetweenDirections (from, to);
-			spriteRend.sprite = turnSprite;
+			print(spriteRend);
+			spriteRend.sprite = turnedSnakeSprite;
+			angle = GetTurnedSnakeAngle (fromDirection.Side, toDirection.Side);
 		}
 		rb.MoveRotation (angle);
 	}
 
-	private float GetAngleBetweenDirections (WorldDirection from, WorldDirection to) {
+	/// <summary>
+	/// return the angle for turned sprite between "from" and "to" directions
+	/// </summary>
+	/// <param name="from">direction 'from' where it is coming</param>
+	/// <param name="to">direction 'to' where it is going</param>
+	private float GetTurnedSnakeAngle (WorldDirection from, WorldDirection to) {
 		switch (from) {
 			case WorldDirection.Up:
 				return GetTurnSide (to) ?
@@ -52,7 +60,12 @@ public class SnakeBody : SnakePart {
 		return 0f;
 	}
 
+	/// <summary>
+	/// returns true if the snake is going to up or right or false to left or down
+	/// </summary>
+	/// <param name="to">direction to where the snake is going</param>
 	private bool GetTurnSide (WorldDirection to) {
 		return to == WorldDirection.Up || to == WorldDirection.Right;
 	}
+	#endregion
 }

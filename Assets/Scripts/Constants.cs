@@ -1,7 +1,11 @@
 ﻿public static class Constants {
+	
+	public static readonly string NEW_RECORD = "CONGRATS!\nNEW RECORD!";
+
 	public static readonly float SPRITES_ANGLE_OFFSET = 90f;
 	public static readonly float EPSILON = 0.001f;
 	public static readonly float FADE = 1f;
+	public static readonly float MOVEMENT_TIMEOUT_DIVISOR = 10f;
 
 	public static class AngleFromToDirection {
 		public static readonly float DOWN_TO_LEFT = 0f;
