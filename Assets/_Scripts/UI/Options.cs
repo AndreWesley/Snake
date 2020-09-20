@@ -18,6 +18,8 @@ public class Options : MonoBehaviour {
 	[SerializeField] private ScriptableGameEvent onAudioChange = null;
 
 	private void Start () {
+		LoadPreferences();
+
 		//setup difficulty UI
 		difficultyText.text = options.gameLevel.ToString ();
 		difficulty.value = options.gameLevel;
@@ -30,6 +32,22 @@ public class Options : MonoBehaviour {
 		//setup sfx UI
 		sfx.value = Mathf.RoundToInt(sfx.maxValue * options.sfxVolume);
 		sfx.onValueChanged.AddListener(SetSFXVolume);
+	}
+
+	public void SavePreferences()
+	{
+		PlayerPrefs.SetInt("Level", options.gameLevel);
+		PlayerPrefs.SetFloat("Music", options.musicVolume);
+		PlayerPrefs.SetFloat("SFX", options.sfxVolume);
+		PlayerPrefs.Save();
+	}
+
+	public void LoadPreferences()
+	{
+		int level = PlayerPrefs.GetInt("Level");
+		options.gameLevel = level == 0 ? 1 : level;
+		options.musicVolume = PlayerPrefs.GetFloat("Music");
+		options.sfxVolume = PlayerPrefs.GetFloat("SFX");
 	}
 
 	#region options handlers

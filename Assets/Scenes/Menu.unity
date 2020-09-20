@@ -1183,7 +1183,7 @@ PrefabInstance:
     - target: {fileID: 5624118336047171026, guid: cb8788ca17034f949958a68bf5aec90f,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5624118336047171026, guid: cb8788ca17034f949958a68bf5aec90f,
         type: 3}
@@ -1299,6 +1299,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Colors.m_NormalColor.b
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5624118336047171026, guid: cb8788ca17034f949958a68bf5aec90f,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5624118336047171026, guid: cb8788ca17034f949958a68bf5aec90f,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5624118336047171026, guid: cb8788ca17034f949958a68bf5aec90f,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
+      value: 
+      objectReference: {fileID: 661447862}
+    - target: {fileID: 5624118336047171026, guid: cb8788ca17034f949958a68bf5aec90f,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
+      value: Options, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5624118336047171026, guid: cb8788ca17034f949958a68bf5aec90f,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
+      value: SavePreferences
+      objectReference: {fileID: 0}
+    - target: {fileID: 5624118336047171026, guid: cb8788ca17034f949958a68bf5aec90f,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 5949173362622064609, guid: cb8788ca17034f949958a68bf5aec90f,
         type: 3}
