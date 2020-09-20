@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Options
   m_EditorClassIdentifier: 
   gameLevel: 9
-  musicVolume: 0.7257228
-  sfxVolume: 0.46827087
+  musicVolume: 0.001
+  sfxVolume: 1

@@ -12,3 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89833621021378e43ba9803e9c0884ad, type: 3}
   m_Name: Grid
   m_EditorClassIdentifier: 
+  mainTile: {fileID: 11400000, guid: 41cf6d90c5c7edf4a96ad9d2bab15c71, type: 2}
+  mainTileProbability: 0.9
+  tiles:
+  - {fileID: 11400000, guid: 628417aece9981141b4722013d384381, type: 2}
+  - {fileID: 11400000, guid: ef494b336e5518449867ef3426cb8ec5, type: 2}
+  - {fileID: 11400000, guid: a8fd1d6d00da1e448a2c0be75ae84287, type: 2}
+  - {fileID: 11400000, guid: b9b46f4b8f8749241998338d7d5129d9, type: 2}
